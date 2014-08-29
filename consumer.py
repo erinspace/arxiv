@@ -25,7 +25,6 @@ def consume():
 
     xml_list = []
 
-    urls_collected = 1
     for url in urls_for_info:
         try:
             # matches everything after a slash then 4 numbers, a dot, 4 more numbers
@@ -44,8 +43,6 @@ def consume():
                     'doc_id': arxiv_id,
                     'filetype': 'xml'
                 }))
-        print '{} urls collected'.format(urls_collected)
-        urls_collected += 1
         time.sleep(2)
 
     return xml_list
@@ -79,10 +76,7 @@ def normalize(raw_doc, timestamp):
         'contributors': get_contributors(doc),
         'properties': {
                 'links': (doc.xpath('//atom:link/@href', namespaces=NAMESPACES) or [''])[0],
-                'comments': (doc.xpath('//arxiv:comment/node()', namespaces=NAMESPACES) or [''])[0],
-                # 'language': (doc.xpath('//dc:language/node()', namespaces=NAMESPACES) or [''])[0],
-                # 'type': (doc.xpath('//dc:type/node()', namespaces=NAMESPACES) or [''])[0]
-
+                'comments': (doc.xpath('//arxiv:comment/node()', namespaces=NAMESPACES) or [''])[0]
         },
         'description': (doc.xpath('//atom:summary/node()', namespaces=NAMESPACES) or [''])[0],
         'meta': {},
