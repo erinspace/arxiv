@@ -6,10 +6,11 @@ minute: 59
 
 directory: 'arxiv'
 
-name: 'arXiv
+long_name: 'arXiv'
+short_name: 'arxiv
 
-git-url: 'https://github.com/erinspace/arxiv.git'
+git_url: 'https://github.com/erinspace/arxiv.git'
 
-file-format: '.xml'
+file_format: '.xml'
 
 ...
