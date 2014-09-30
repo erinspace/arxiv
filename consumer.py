@@ -8,8 +8,8 @@ from lxml import etree
 from dateutil.parser import *
 from nameparser import HumanName
 
-from scrapi_tools import lint
-from scrapi_tools.document import RawDocument, NormalizedDocument
+from scrapi.linter import lint
+from scrapi.linter.document import RawDocument, NormalizedDocument
 
 NAME = 'arxiv'
 NAMESPACES = {'urlset': 'http://www.sitemaps.org/schemas/sitemap/0.9',
@@ -27,7 +27,7 @@ def consume(days_back=1):
     export_base = 'http://export.arxiv.org/api/query?search_query='
 
     xml_list = []
-    for url in urls_for_info[:5]:
+    for url in urls_for_info[:1]:
         try:
             # matches everything after a slash then 4 numbers, a dot, 4 more numbers
             arxiv_id = re.search('(?<=/)\d{4}(\.)?\d{4}', url).group(0)
@@ -43,7 +43,7 @@ def consume(days_back=1):
         xml_list.append(RawDocument({
                     'doc': etree.tostring(record),
                     'source': NAME,
-                    'doc_id': arxiv_id,
+                    'docID': arxiv_id,
                     'filetype': 'xml'
                 }))
         time.sleep(2)
@@ -53,7 +53,7 @@ def consume(days_back=1):
 def get_ids(doc, raw_doc):
     ids = {}
     ids['doi'] = (doc.xpath('//arxiv:doi/node()', namespaces=NAMESPACES) or [''])[0]
-    ids['service_id'] = raw_doc.get('doc_id')
+    ids['service_id'] = raw_doc.get('docID')
     links = doc.xpath('//atom:link[@title="doi"]/@href', namespaces=NAMESPACES)
     if len(links) == 0:
         links = doc.xpath('//atom:link[@rel="alternate"]/@href', namespaces=NAMESPACES)
@@ -111,7 +111,7 @@ def normalize(raw_doc, timestamp):
         "id": get_ids(doc, raw_doc),
         "source": NAME,
         "tags": get_tags(doc),
-        "date_created": get_date_created(doc),
+        "dateCreated": get_date_created(doc),
         "dateUpdated": get_date_updated(doc),
         "timestamp": str(timestamp)
     }
