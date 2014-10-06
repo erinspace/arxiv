@@ -42,7 +42,7 @@ def consume(days_back=1):
     export_base = 'http://export.arxiv.org/api/query?search_query='
 
     xml_list = []
-    for url in urls_for_info[:1]:
+    for url in urls_for_info:
         try:
             # matches everything after a slash then 4 numbers, a dot, 4 more numbers
             arxiv_id = re.search('(?<=/)\d{4}(\.)?\d{4}', url).group(0)
@@ -129,7 +129,7 @@ def get_properties(doc):
             unicode_links.pop(index)
     return {"links": unicode_links, "comments": comments, "pdf": pdf, "updated": updated}
 
-def normalize(raw_doc, timestamp):
+def normalize(raw_doc):
     raw_doc_text = raw_doc.get('doc')
     doc = etree.XML(raw_doc_text)
 
@@ -145,8 +145,7 @@ def normalize(raw_doc, timestamp):
         "source": NAME,
         "tags": get_tags(doc),
         "dateCreated": get_date_created(doc),
-        "dateUpdated": get_date_updated(doc),
-        "timestamp": timestamp
+        "dateUpdated": get_date_updated(doc)
     }
 
     return NormalizedDocument(normalized_dict)
