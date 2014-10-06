@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 import re
 import time
-import json
 import requests
 from lxml import etree
 from dateutil.parser import *
