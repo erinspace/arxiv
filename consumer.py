@@ -41,6 +41,7 @@ def consume(days_back=1):
     export_base = 'http://export.arxiv.org/api/query?search_query='
 
     xml_list = []
+    print len(urls_for_info)
     for url in urls_for_info:
         try:
             # matches everything after a slash then 4 numbers, a dot, 4 more numbers
@@ -121,11 +122,17 @@ def get_properties(doc):
     updated = copy_to_unicode(updated)
     pdf = ''
     unicode_links = []
+    # if len(links) > 1:
     for index, link in enumerate(links):
         unicode_links.append(copy_to_unicode(link))
         if "pdf" in link:
             pdf = copy_to_unicode(link)
-            unicode_links.pop(index)
+            # TODO - fix this strange error - index shouldn't error... 
+            try:
+                unicode_links.pop(index)
+            except IndexError as e:
+                print("{} - didn't remove pdf from links...".format(e))
+
     return {"links": unicode_links, "comments": comments, "pdf": pdf, "updated": updated}
 
 def normalize(raw_doc):
