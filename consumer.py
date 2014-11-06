@@ -151,9 +151,10 @@ def normalize(raw_doc):
         "source": NAME,
         "tags": get_tags(doc),
         "dateCreated": get_date_created(doc),
-        "dateUpdated": get_date_updated(doc)
+        "dateUpdated": get_date_updated(doc),
+        "raw": raw_doc_text
     }
-
+    import pdb; pdb.set_trace()
     return NormalizedDocument(normalized_dict)
 
 
