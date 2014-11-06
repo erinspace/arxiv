@@ -13,11 +13,10 @@ from scrapi.linter.document import RawDocument, NormalizedDocument
 
 NAME = 'arxiv'
 NAMESPACES = {'urlset': 'http://www.sitemaps.org/schemas/sitemap/0.9',
-            'arxiv': 'http://arxiv.org/schemas/atom',
-            'atom': 'http://www.w3.org/2005/Atom'}
+              'arxiv': 'http://arxiv.org/schemas/atom',
+              'atom': 'http://www.w3.org/2005/Atom'}
 
 DEFAULT_ENCODING = 'UTF-8'
-
 record_encoding = None
 
 def copy_to_unicode(element):
@@ -34,7 +33,7 @@ def consume(days_back=1):
     changes_url = 'http://resync.library.cornell.edu/arxiv-all/changelist.xml'
 
     changelist = requests.get(changes_url)
-    changelist_encoding = changelist.encoding
+    record_encoding = changelist.encoding
     changeXML = etree.XML(changelist.content)
 
     urls_for_info = changeXML.xpath('//urlset:loc/node()', namespaces=NAMESPACES)
@@ -81,6 +80,9 @@ def get_ids(doc, raw_doc):
         'serviceID': raw_doc.get('docID'),
         'url': url
     }
+
+    if url == '':
+        raise Exception('Warning: No url provided!')
 
     return ids
 
