@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import re
 import time
 import requests
+import logging
 from lxml import etree
 from dateutil.parser import *
 from nameparser import HumanName
@@ -18,6 +19,8 @@ NAMESPACES = {'urlset': 'http://www.sitemaps.org/schemas/sitemap/0.9',
 
 DEFAULT_ENCODING = 'UTF-8'
 record_encoding = None
+
+logger = logging.getLogger(__name__)
 
 def copy_to_unicode(element):
 
@@ -40,14 +43,13 @@ def consume(days_back=1):
     export_base = 'http://export.arxiv.org/api/query?search_query='
 
     xml_list = []
-    print len(urls_for_info)
     for url in urls_for_info:
         try:
             # matches everything after a slash then 4 numbers, a dot, 4 more numbers
             arxiv_id = re.search('(?<=/)\d{4}(\.)?\d{4}', url).group(0)
         except AttributeError:
-            print 'Warning: malformed arxiv ID, skipping entry for {}'.format(url)
-            continue    
+            logger.error('Warning: malformed arxiv ID, skipping entry for {}'.format(url))
+            continue
 
         export_url = export_base + arxiv_id
 
@@ -129,11 +131,11 @@ def get_properties(doc):
         unicode_links.append(copy_to_unicode(link))
         if "pdf" in link:
             pdf = copy_to_unicode(link)
-            # TODO - fix this strange error - index shouldn't error... 
+            # TODO - fix this strange error - index shouldn't error...
             try:
                 unicode_links.pop(index)
             except IndexError as e:
-                print("{} - didn't remove pdf from links...".format(e))
+                logger.exception(e)
 
     return {"links": unicode_links, "comments": comments, "pdf": pdf, "updated": updated}
 
@@ -156,7 +158,6 @@ def normalize(raw_doc):
         "dateUpdated": get_date_updated(doc),
         "raw": raw_doc_text
     }
-    import pdb; pdb.set_trace()
     return NormalizedDocument(normalized_dict)
 
 
